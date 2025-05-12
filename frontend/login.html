@@ -3,46 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="css/login.css" />
+  <link rel="stylesheet" href="/css/login.css" />
   <title>Login</title>
-  <style>
-    /* Popup overlay */
-    .popup {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      top: 0;
-      left: 0;
-      height: 100vh;
-      width: 100vw;
-      background: rgba(0, 0, 0, 0.5);
-    }
-
-    .popup-content {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: white;
-      padding: 50px 60px;
-      border-radius: 12px;
-      text-align: center;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-    }
-
-    .popup-content h3 {
-      color: green;
-      font-size: 18px;
-      margin: 0;
-    }
-
-    #error-msg {
-      color: red;
-      font-size: 14px;
-      display: none;
-      margin-top: 10px;
-    }
-  </style>
 </head>
 <body>
   <div class="container">
@@ -60,24 +22,32 @@
     </div>
   </div>
 
-  <!-- Popup modal -->
+  <!-- Dynamic Popup Modal -->
   <div id="popup" class="popup">
     <div class="popup-content">
-      <h3>Login Successful!</h3>
+      <div id="popup-icon" class="popup-icon">✔</div>
+      <h3 id="popup-message">Login Successful!</h3>
     </div>
   </div>
 
+  <!-- Script -->
   <script>
     const loginForm = document.getElementById("loginForm");
     const errorMsg = document.getElementById("error-msg");
     const popup = document.getElementById("popup");
+    const popupMessage = document.getElementById("popup-message");
+    const popupIcon = document.getElementById("popup-icon");
+
+    const predefinedUser = {
+      email: "admin@example.com",
+      password: "admin123"
+    };
 
     loginForm.addEventListener("submit", function (e) {
       e.preventDefault();
 
       const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value.trim();
-
       const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
       if (!email || !password) {
@@ -94,13 +64,30 @@
 
       errorMsg.style.display = "none";
 
-      // Show popup
-      popup.style.display = "block";
+      if (email === predefinedUser.email && password === predefinedUser.password) {
+        // Success
+        popupMessage.textContent = "Login Successful!";
+        popupIcon.textContent = "✔";
+        popup.classList.remove("error");
+        popup.classList.add("success");
+        popup.style.display = "block";
 
-      // Redirect after 2 seconds
-      setTimeout(() => {
-        window.location.href = "analysis.html"; // Change this to your target page
-      }, 2000);
+        setTimeout(() => {
+          popup.style.display = "none";
+          window.location.href = "Dashboard.html";
+        }, 2000);
+      } else {
+        // Error
+        popupMessage.textContent = "Invalid email or password!";
+        popupIcon.textContent = "✖";
+        popup.classList.remove("success");
+        popup.classList.add("error");
+        popup.style.display = "block";
+
+        setTimeout(() => {
+          popup.style.display = "none";
+        }, 2000);
+      }
     });
   </script>
 </body>
