@@ -277,7 +277,7 @@ function searchUsers() {
     };
   </script> -->
 
-  <script>
+<script>
   function toggleSidebar() {
     document.querySelector('.sidebar-menu').classList.toggle('collapsed');
     document.querySelector('.relationship-container').classList.toggle('sidebar-collapsed');
@@ -300,11 +300,9 @@ function searchUsers() {
     const actionData = JSON.parse(localStorage.getItem("actionDetails")) || {};
     const logs = actionData[email] || [];
 
-    // Clear old data
     tbody.innerHTML = '';
     timelineList.innerHTML = '';
 
-    // Populate table
     logs.forEach(log => {
       const dateStr = new Date(log.timestamp).toLocaleString();
       const row = `
@@ -317,9 +315,10 @@ function searchUsers() {
       tbody.insertAdjacentHTML('beforeend', row);
     });
 
-    // Populate timeline
     logs.forEach(log => {
-      const timeOnly = new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      const timeOnly = new Date(log.timestamp).toLocaleTimeString([], {
+        hour: '2-digit', minute: '2-digit', second: '2-digit'
+      });
       const li = `<li>${timeOnly} — ${getTimelineMessage(log.action, log.detail)}</li>`;
       timelineList.insertAdjacentHTML('beforeend', li);
     });
@@ -373,8 +372,12 @@ function searchUsers() {
     const tbody = document.getElementById('user-table-body');
     tbody.innerHTML = '';
 
+    // Stop auto-refresh during search
+    clearInterval(refreshInterval);
+
     if (!query) {
-      fetchUsers(); // show all
+      fetchUsers();
+      refreshInterval = setInterval(fetchUsers, 5000); // Restart auto-refresh if input cleared
       return;
     }
 
@@ -408,6 +411,7 @@ function searchUsers() {
     refreshInterval = setInterval(fetchUsers, 5000);
   };
 </script>
+
 
 </body>
 </html>
