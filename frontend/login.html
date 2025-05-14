@@ -31,7 +31,7 @@
   </div>
 
   <!-- Script -->
-  <script>
+  <!-- <script>
     const loginForm = document.getElementById("loginForm");
     const errorMsg = document.getElementById("error-msg");
     const popup = document.getElementById("popup");
@@ -89,6 +89,108 @@
         }, 2000);
       }
     });
-  </script>
+  </script> -->
+
+
+  <script>
+  const loginForm = document.getElementById("loginForm");
+  const errorMsg = document.getElementById("error-msg");
+  const popup = document.getElementById("popup");
+  const popupMessage = document.getElementById("popup-message");
+  const popupIcon = document.getElementById("popup-icon");
+
+  // Predefined users
+  const predefinedUsers = [
+    {
+      email: "admin@example.com",
+      password: "admin123",
+      username: "Admin",
+      department: "IT"
+    },
+    {
+      email: "user1@example.com",
+      password: "user123",
+      username: "User One",
+      department: "Finance"
+    },
+    {
+      email: "analyst@example.com",
+      password: "analy123",
+      username: "Analyst",
+      department: "Analysis"
+    }
+  ];
+
+  loginForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!email || !password) {
+      errorMsg.textContent = "All fields are required.";
+      errorMsg.style.display = "block";
+      return;
+    }
+
+    if (!emailPattern.test(email)) {
+      errorMsg.textContent = "Please enter a valid email address.";
+      errorMsg.style.display = "block";
+      return;
+    }
+
+    errorMsg.style.display = "none";
+
+    //  Match user credentials
+    const matchedUser = predefinedUsers.find(
+      (user) => user.email === email && user.password === password
+    );
+
+    if (matchedUser) {
+      // Save logged-in email for future use in other pages (like audit logs)
+      localStorage.setItem("loggedInEmail", matchedUser.email);
+
+      // Create login record
+      const loginRecord = {
+        email: matchedUser.email,
+        username: matchedUser.username,
+        department: matchedUser.department,
+        timestamp: new Date().toISOString(),
+        status: "Online"
+      };
+
+      // Save into loginAudit log
+      const existingLogs = JSON.parse(localStorage.getItem("loginAudit")) || [];
+      existingLogs.push(loginRecord);
+      localStorage.setItem("loginAudit", JSON.stringify(existingLogs));
+
+      // Show popup and redirect
+      popupMessage.textContent = "Login Successful!";
+      popupIcon.textContent = "✔";
+      popup.classList.remove("error");
+      popup.classList.add("success");
+      popup.style.display = "block";
+
+      setTimeout(() => {
+        popup.style.display = "none";
+        window.location.href = "Dashboard.html"; // Or change to "Dashboard.html"
+      }, 2000);
+    } else {
+      //Invalid credentials
+      popupMessage.textContent = "Invalid email or password!";
+      popupIcon.textContent = "✖";
+      popup.classList.remove("success");
+      popup.classList.add("error");
+      popup.style.display = "block";
+
+      setTimeout(() => {
+        popup.style.display = "none";
+      }, 2000);
+    }
+  });
+</script>
+
+
 </body>
 </html>
